@@ -346,6 +346,9 @@ extension Workflow {
             
             if let error = response.error as NSError? {
                 if error.code == -999 { return } // cancelled
+                if let afError = error as? AFError, afError.isDownloadedFileMoveError {
+                    return
+                }
                 self.currentRequest = nil
                 self.waitingFiles.insert(fullURL, at: 0)
                 self.downloadNextFile()
