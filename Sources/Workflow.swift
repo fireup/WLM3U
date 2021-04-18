@@ -111,6 +111,10 @@ extension Workflow {
         // e.g. http://qq.com/123/hls/FromSoftware.m3u
         
         let m3uName: String = url.deletingPathExtension().lastPathComponent // FromSoftware
+        
+        // Unique folder
+        m3uName = UUID().uuidString + "_" + m3uName
+        
         workflowDir = workSpace.appendingPathComponent(m3uName) // ../workSpace/FromSoftware
         let cacheURL = workflowDir!.appendingPathComponent("m3uObj")
         
