@@ -209,7 +209,7 @@ extension Workflow {
             model.tsArr = arr.compactMap { handler($0, uri) }
         } else {
             model.tsArr = arr
-                .filter { $0.hasSuffix(".ts") }
+                .filter { $0.contains(".ts") }
                 .map { uri.appendingPathComponent($0) }
         }
         if model.tsArr?.isEmpty ?? true { throw WLError.m3uFileContentInvalid }
