@@ -193,9 +193,20 @@ open class Manager {
     /// - Returns: Directory url of the folder.
     public func folder(for url: URL) -> URL? {
         if url.isFileURL { return nil }
-        let name: String = url.deletingPathExtension().lastPathComponent
+//        let name: String = url.deletingPathExtension().lastPathComponent
+        let name = dirName(for: url)
         let folder = workSpace.appendingPathComponent(name)
         return folder
+    }
+    
+    func dirName(for url: URL) -> String {
+        let urlStr = url.absoluteString
+        if let guid = UserDefaults.standard.string(forKey: urlStr) {
+            return guid
+        }
+        let guid = UUID().uuidString
+        UserDefaults.standard.setValue(guid, forKey: urlStr)
+        return guid
     }
 }
 
