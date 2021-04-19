@@ -291,10 +291,33 @@ extension Workflow {
                 return
             }
             self.waitingFiles = tsArr
+            self.pickOutDownloaded()
             self.downloadNextFile()
             self.createTimer()
         }
         return self
+    }
+    
+    private func pickOutDownloaded() {
+        for fullURL in waitingFiles {
+            let fileName = fullURL.lastPathComponent
+            let fileLocalURL = tsDir!.appendingPathComponent(fileName)
+            if fileManager!.fileExists(atPath: fileLocalURL.path) {
+                do {
+                    let size = try fileManager!.attributesOfItem(atPath: fileLocalURL.path)[FileAttributeKey.size] as! Int64
+                    let progress = Progress(totalUnitCount: size)
+                    progress.completedUnitCount = size
+                    preCompletedCount += Int(size)
+                    progressDic[fullURL] = progress
+                } catch {
+                    handleCompletion(of: "download",
+                                     completion: downloadCompletion,
+                                     result: .failure(.handleCacheFailed(error)))
+                    return
+                }
+                waitingFiles.removeAll { $0 == fullURL }
+            }
+        }
     }
     
     private func downloadNextFile() {
